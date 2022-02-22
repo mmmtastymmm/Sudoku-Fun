@@ -15,7 +15,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "test"
-  test:
+  pytest:
     # The type of runner that the job will run on (has to be ubuntu for docker)
     runs-on: ubuntu-latest
     # The image tag to use for the container

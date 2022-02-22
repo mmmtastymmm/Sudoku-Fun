@@ -61,5 +61,39 @@ def test_grid_provided_invalid_col():
         Puzzle(input_grid)
 
 
+def test_get_options_blank():
+    puzzle = Puzzle()
+    options = puzzle.get_options_for_index(0, 0)
+    assert len(options) == 9
+
+
+def test_get_options_row_full():
+    puzzle = Puzzle()
+    for i in range(1, 9):
+        puzzle.puzzle_grid[0, i - 1] = i
+    options = puzzle.get_options_for_index(0, 8)
+    assert len(options) == 1
+    assert options.pop() == 9
+
+
+def test_get_options_col_full():
+    puzzle = Puzzle()
+    for i in range(1, 9):
+        puzzle.puzzle_grid[i - 1, 0] = i
+    options = puzzle.get_options_for_index(8, 0)
+    assert len(options) == 1
+    assert options.pop() == 9
+
+
+def test_get_options_square_full():
+    puzzle = Puzzle()
+    for i in range(3):
+        for j in range(3):
+            puzzle.puzzle_grid[i, j] = i + j * 3
+    options = puzzle.get_options_for_index(2, 2)
+    assert len(options) == 1
+    assert options.pop() == 9
+
+
 def test_puzzle_generation():
     puzzle = Puzzle.make_solvable_puzzle()

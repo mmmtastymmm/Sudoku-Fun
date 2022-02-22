@@ -11,6 +11,10 @@ def is_legal_set(numbers: np.ndarray) -> bool:
     return num_zeros + len(number_set) == 9
 
 
+def get_square_index(index):
+    return index // 3
+
+
 class Puzzle:
 
     def __init__(self, grid: Optional[np.ndarray] = None):
@@ -33,8 +37,8 @@ class Puzzle:
     def is_puzzle_empty(self) -> bool:
         return np.all(self.puzzle_grid == 0)
 
-    def get_square(self, row, col) -> np.ndarray:
-        return self.puzzle_grid[row * 3:row * 3 + 3, col * 3:col * 3 + 3]
+    def get_square(self, square_row, square_col) -> np.ndarray:
+        return self.puzzle_grid[square_row * 3:square_row * 3 + 3, square_col * 3:square_col * 3 + 3]
 
     def is_puzzle_valid(self) -> bool:
         # Check only has legal values
@@ -60,6 +64,13 @@ class Puzzle:
         # Passed all checks so it is valid
         return True
 
+    def get_options_for_index(self, row, col):
+        already_taken = set(self.puzzle_grid[row, :])
+        already_taken = already_taken.union(self.puzzle_grid[:, col])
+        already_taken = already_taken.union(self.get_square(get_square_index(row), get_square_index(col)).flatten())
+        options = set([i for i in range(1, 10)]).difference(already_taken)
+        return options
+
     @classmethod
     def make_solvable_puzzle(cls):
-        pass
+        index = (np.random.randint(0, 9), np.random.randint(0, 9))

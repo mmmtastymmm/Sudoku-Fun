@@ -19,7 +19,7 @@ jobs:
     # The type of runner that the job will run on (has to be ubuntu for docker)
     runs-on: ubuntu-latest
     # The image tag to use for the container
-    container: mmmtastymmm/sudoku-fun:0.1.0
+    container: mmmtastymmm/sudoku-fun:0.2.0
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it

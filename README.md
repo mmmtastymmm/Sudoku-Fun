@@ -1,1 +1,1 @@
-# Sudoku-Fun
+# Sudoku-Fun ![example workflow](https://github.com/mmmtastymmm/sudoku-fun/actions/workflows/test.yml/badge.svg)

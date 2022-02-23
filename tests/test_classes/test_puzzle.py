@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from classes.puzzle import Puzzle, make_solvable_puzzle
+from classes.puzzle import Puzzle, make_solvable_puzzle, make_puzzle_answer_key
 
 
 def test_empty_puzzle_constructor():
@@ -102,13 +102,19 @@ def test_get_options_square_full():
     assert options.pop() == 9
 
 
-def test_puzzle_generation():
-    puzzle = make_solvable_puzzle()
+def test_answer_key_generation():
+    puzzle = make_puzzle_answer_key()
     assert puzzle.is_puzzle_valid()
     assert puzzle.is_finished()
-    # found_ok_amount = 0
-    # for i in range(9):
-    #     for j in range(9):
-    #         if puzzle.get_options_for_index(i, j) == 1:
-    #             found_ok_amount += 1
-    # assert found_ok_amount != 0
+
+
+def test_generate_puzzle():
+    puzzle = make_solvable_puzzle()
+    assert puzzle.is_puzzle_valid()
+    print(f"\n{puzzle}")
+    found_ok_amount = 0
+    for i in range(9):
+        for j in range(9):
+            if len(puzzle.get_options_for_index(i, j)) == 1:
+                found_ok_amount += 1
+    assert found_ok_amount != 0

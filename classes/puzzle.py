@@ -27,6 +27,10 @@ def get_square_index(index):
 
 
 def make_puzzle_answer_key() -> 'Puzzle':
+    """
+    Generates a puzzle that has all the numbers already filled in
+    :return: A puzzle with all numbers filled in
+    """
     puzzle = Puzzle()
     adjustments: list[Tuple[int, int]] = []
     bad_adjustments: dict[Tuple[int, int], list[int]] = {}
@@ -63,18 +67,30 @@ def make_puzzle_answer_key() -> 'Puzzle':
                 row_to_update, col_to_update, bad_adjustments.get((row_to_update, col_to_update), []))))
         puzzle.puzzle_grid[row_to_update, col_to_update] = value_to_update_with
         adjustments.append((row_to_update, col_to_update))
-        print(puzzle)
 
     return puzzle
 
 
 def make_solvable_puzzle() -> 'Puzzle':
+    """
+    Generates a solvable puzzle. Typically, fairly easy to solve
+    :return: A puzzle with gaps, but solvable
+    """
     answer_key = make_puzzle_answer_key()
     puzzle = Puzzle(answer_key.puzzle_grid)
-    indexes = []
-    for i in range(9):
-        for j in range(9):
-            indexes.append((i, j))
+    # Make all the indexes
+    indexes = [(i, j) for i in range(9) for j in range(9)]
+    random.shuffle(indexes)
+    for row, col in indexes:
+        old_value = puzzle.puzzle_grid[row, col]
+        puzzle.puzzle_grid[row, col] = 0
+        still_no_guess = False
+        for i in range(9):
+            for j in range(9):
+                if len(puzzle.get_options_for_index(row, col)) == 1:
+                    still_no_guess = True
+        if not still_no_guess:
+            puzzle.puzzle_grid[row, col] = old_value
     return answer_key
 
 
@@ -95,6 +111,7 @@ class Puzzle:
             raise ValueError("The input grid was not valid")
 
     def __str__(self) -> str:
+        # Make a pretty 3 by 3 puzzle with borders
         pretty_puzzle = '_' * 19
         for i in range(9):
             pretty_puzzle += '\n|'
@@ -160,15 +177,23 @@ class Puzzle:
         :param numbers_to_avoid: Optional iterable of other numbers to exclude
         :return: A set of numbers which could be placed into the spot without conflicting anything in the puzzle so far
         """
+        # If we already a number there are no options
         if self.puzzle_grid[row, col] != 0:
             return set()
+        # Otherwise, combine all the already taken numbers
         already_taken = set(self.puzzle_grid[row, :])
         already_taken = already_taken.union(self.puzzle_grid[:, col])
         already_taken = already_taken.union(self.get_square(get_square_index(row), get_square_index(col)).flatten())
+        # If there are other numbers to avoid add those too
         if numbers_to_avoid is not None:
             already_taken = already_taken.union(numbers_to_avoid)
+        # Options are whatever numbers aren't already taken
         options = set([i for i in range(1, 10)]).difference(already_taken)
         return options
 
     def is_finished(self) -> bool:
-        return not np.any(self.puzzle_grid == 0)
+        """
+        Sees if the puzzle is filled in completely
+        :return: True if all the cells have a number and the puzzle is valid
+        """
+        return not np.any(self.puzzle_grid == 0) and self.is_puzzle_valid()

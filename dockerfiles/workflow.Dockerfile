@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:impish
 
 SHELL ["/bin/bash", "--login", "-c"]
 ENV DEBIAN_FRONTEND noninteractive

@@ -17,7 +17,7 @@ def is_legal_set(numbers: np.ndarray) -> bool:
     return num_zeros + len(number_set) == 9
 
 
-def get_square_index(index):
+def get_square_index(index: int):
     """
     Gets the index for the large square this belongs to
     :param index: The index into the whole puzzle
@@ -137,7 +137,7 @@ class Puzzle:
         """
         return np.all(self.puzzle_grid == 0)
 
-    def get_square(self, square_row, square_col) -> np.ndarray:
+    def get_square(self, square_row: int, square_col: int) -> np.ndarray:
         """
         Gets a square given an index
         :param square_row: The square row
@@ -174,7 +174,7 @@ class Puzzle:
         # Passed all checks so it is valid
         return True
 
-    def get_options_for_index(self, row, col, numbers_to_avoid: Optional[Iterable[int]] = None) -> set[int]:
+    def get_options_for_index(self, row: int, col: int, numbers_to_avoid: Optional[Iterable[int]] = None) -> set[int]:
         """
         Gets all remaining numbers that COULD go into an index based on the state of the puzzle
         :param row: the row of the element
@@ -202,3 +202,19 @@ class Puzzle:
         :return: True if all the cells have a number and the puzzle is valid
         """
         return not np.any(self.puzzle_grid == 0) and self.is_puzzle_valid()
+
+    def safe_update(self, row: int, col: int, value: int) -> bool:
+        """
+        Tries to update the row and col with the new value. If it doesn't break the puzzle return true and update,
+        if the puzzle is no longer valid put the old value back and return false
+        :param row: row to change
+        :param col: col to change
+        :param value: the value to update with
+        :return: True if the puzzle was updated, False if the update was rejected
+        """
+        old_value = self.puzzle_grid[row, col]
+        self.puzzle_grid[row, col] = value
+        if not self.is_puzzle_valid():
+            self.puzzle_grid[row, col] = old_value
+            return False
+        return True

@@ -78,19 +78,24 @@ def make_solvable_puzzle() -> 'Puzzle':
     """
     answer_key = make_puzzle_answer_key()
     puzzle = Puzzle(answer_key.puzzle_grid)
-    # Make all the indexes
+    # Make all the indexes and shuffle them
     indexes = [(i, j) for i in range(9) for j in range(9)]
     random.shuffle(indexes)
+    # For each index try to remove it, and if there is still a trivial solvable element the puzzle can still be solved
     for row, col in indexes:
+        # Try to remove the element
         old_value = puzzle.puzzle_grid[row, col]
         puzzle.puzzle_grid[row, col] = 0
         still_no_guess = False
+        # Check there's still an easy element to solve
         for i in range(9):
             for j in range(9):
                 if len(puzzle.get_options_for_index(row, col)) == 1:
                     still_no_guess = True
+        # If there's not an easy solution any more put the number back
         if not still_no_guess:
             puzzle.puzzle_grid[row, col] = old_value
+    # Return this puzzle
     return answer_key
 
 

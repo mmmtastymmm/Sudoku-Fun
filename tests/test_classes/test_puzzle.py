@@ -117,3 +117,19 @@ def test_generate_puzzle():
             if len(puzzle.get_options_for_index(i, j)) == 1:
                 found_ok_amount += 1
     assert found_ok_amount != 0
+
+
+def test_happy_updates():
+    puzzle = Puzzle()
+    assert puzzle.safe_update(0, 0, 3)
+    assert puzzle.safe_update(0, 1, 4)
+    assert puzzle.safe_update(0, 3, 5)
+    assert puzzle.safe_update(0, 0, 6)
+
+
+def test_unhappy_updates():
+    puzzle = Puzzle()
+    assert puzzle.safe_update(0, 0, 3)
+    assert not puzzle.safe_update(0, 1, 3)
+    assert not puzzle.safe_update(0, 1, 3)
+    assert not puzzle.safe_update(1, 1, 3)

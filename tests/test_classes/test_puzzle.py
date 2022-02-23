@@ -111,7 +111,6 @@ def test_answer_key_generation():
 def test_generate_puzzle():
     puzzle = make_solvable_puzzle()
     assert puzzle.is_puzzle_valid()
-    print(f"\n{puzzle}")
     found_ok_amount = 0
     for i in range(9):
         for j in range(9):

@@ -218,3 +218,32 @@ class Puzzle:
             self.puzzle_grid[row, col] = old_value
             return False
         return True
+
+    def generate_answer_key_brute_force(self) -> Optional['Puzzle']:
+        """
+        Makes a possible solution for the puzzle in a new puzzle
+        :return: A puzzle that is a solution to the puzzle
+        """
+        # Make the answer key
+        answer_key = Puzzle(np.array(self.puzzle_grid))
+        # Find which indexes are currently empty
+        index_combinations = [(i, j) for i in range(9) for j in range(9)]
+        empty_indexes = list(filter(lambda x: answer_key.puzzle_grid[x[0], x[1]] == 0.0, index_combinations))
+        # try each possible combination by moving through each empty cell and incrementing it until the puzzle is
+        # correct. Will backtrack if it can't increment anymore
+        i = 0
+        while 0 <= i < len(empty_indexes):
+            row, col = empty_indexes[i]
+            if 0 <= answer_key.puzzle_grid[row, col] <= 8:
+                answer_key.puzzle_grid[row, col] += 1
+                if answer_key.is_puzzle_valid():
+                    i += 1
+            else:
+                answer_key.puzzle_grid[row, col] = 0
+                i -= 1
+        # If we needed to go backwards off the puzzle there is no solution
+        if i == -1:
+            return None
+        # We did find a solution, return that
+        else:
+            return answer_key

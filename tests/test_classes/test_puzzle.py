@@ -133,3 +133,36 @@ def test_unhappy_updates():
     assert not puzzle.safe_update(0, 1, 3)
     assert not puzzle.safe_update(0, 1, 3)
     assert not puzzle.safe_update(1, 1, 3)
+
+
+def test_solve_empty():
+    puzzle = Puzzle()
+    answer = puzzle.generate_answer_key_brute_force()
+    assert answer
+    assert answer.is_finished()
+
+
+def test_solve_on_partially_filled():
+    puzzle = make_solvable_puzzle()
+    answer = puzzle.generate_answer_key_brute_force()
+    assert answer
+    assert answer.is_finished()
+
+
+def test_solve_on_impossible_difficulty():
+    # this is an "insane" level puzzle
+    grid = np.array([
+        [0, 0, 2, 0, 3, 0, 0, 0, 1],
+        [8, 0, 9, 0, 0, 0, 0, 0, 0],
+        [7, 3, 0, 4, 1, 0, 0, 0, 0],
+        [0, 0, 0, 5, 0, 0, 0, 7, 0],
+        [0, 0, 7, 1, 0, 8, 9, 0, 0],
+        [0, 8, 0, 0, 0, 2, 0, 0, 0],
+        [0, 0, 0, 0, 2, 5, 0, 9, 7],
+        [0, 0, 0, 0, 0, 0, 3, 0, 0],
+        [5, 0, 0, 0, 7, 0, 8, 6, 0],
+    ])
+    puzzle = Puzzle(grid)
+    answer = puzzle.generate_answer_key_brute_force()
+    assert answer
+    assert answer.is_finished()

@@ -80,14 +80,14 @@ def redraw_window(window, puzzle: Puzzle, game_time, strikes):
 def handle_arrow_keys(event, puzzle):
     if not puzzle.selected:
         return
-    if event.key == pygame.K_LEFT:
-        puzzle.selected[0] = max(puzzle.selected[0] - 1, 0)
-    if event.key == pygame.K_RIGHT:
-        puzzle.selected[0] = min(puzzle.selected[0] + 1, 8)
     if event.key == pygame.K_UP:
-        puzzle.selected[1] = max(puzzle.selected[1] - 1, 0)
+        puzzle.selected = max(puzzle.selected[0] - 1, 0), puzzle.selected[1]
     if event.key == pygame.K_DOWN:
-        puzzle.selected[1] = min(puzzle.selected[1] + 1, 8)
+        puzzle.selected = min(puzzle.selected[0] + 1, 8), puzzle.selected[1]
+    if event.key == pygame.K_LEFT:
+        puzzle.selected = puzzle.selected[0], max(puzzle.selected[1] - 1, 0)
+    if event.key == pygame.K_RIGHT:
+        puzzle.selected = puzzle.selected[0], min(puzzle.selected[1] + 1, 8)
 
 
 def main():

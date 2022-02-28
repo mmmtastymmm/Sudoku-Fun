@@ -105,7 +105,7 @@ def test_get_options_square_full():
 def test_answer_key_generation():
     puzzle = make_puzzle_answer_key()
     assert puzzle.is_puzzle_valid()
-    assert puzzle.is_finished()
+    assert puzzle.is_puzzle_solved()
 
 
 def test_generate_puzzle():
@@ -139,14 +139,14 @@ def test_solve_empty():
     puzzle = Puzzle()
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
-    assert answer.is_finished()
+    assert answer.is_puzzle_solved()
 
 
 def test_solve_on_partially_filled():
     puzzle = make_solvable_puzzle()
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
-    assert answer.is_finished()
+    assert answer.is_puzzle_solved()
 
 
 def test_solve_on_impossible_difficulty():
@@ -165,4 +165,27 @@ def test_solve_on_impossible_difficulty():
     puzzle = Puzzle(grid)
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
-    assert answer.is_finished()
+    assert answer.is_puzzle_solved()
+
+
+def test_original_list_empty_on_emtpy_puzzle():
+    empty_puzzle = Puzzle()
+    assert len(empty_puzzle.original_indexes) == 0
+
+
+def test_original_list_has_all_filled_puzzle():
+    puzzle = make_solvable_puzzle()
+    for i in range(9):
+        for j in range(9):
+            if puzzle.puzzle_grid[i, j] != 0:
+                assert (i, j) in puzzle.original_indexes
+            else:
+                assert (i, j) not in puzzle.original_indexes
+
+
+def test_unable_to_modify_original_value():
+    grid = np.zeros((9, 9))
+    grid[0, 0] = 2
+    puzzle = Puzzle(grid)
+    assert not puzzle.safe_update(0, 0, 1)
+    assert puzzle.puzzle_grid[0, 0] == 2

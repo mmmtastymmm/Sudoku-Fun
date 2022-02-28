@@ -34,7 +34,7 @@ def make_puzzle_answer_key() -> 'Puzzle':
     puzzle = Puzzle()
     adjustments: list[Tuple[int, int]] = []
     bad_adjustments: dict[Tuple[int, int], list[int]] = {}
-    while not puzzle.is_finished():
+    while not puzzle.is_puzzle_solved():
         spaces_possibilities: list[list[Tuple[int, int]]] = [[] for _ in range(10)]
         for row in range(9):
             for col in range(9):
@@ -96,21 +96,26 @@ def make_solvable_puzzle() -> 'Puzzle':
         if not still_no_guess:
             puzzle.puzzle_grid[row, col] = old_value
     # Return this puzzle
-    return answer_key
+    return Puzzle(puzzle.puzzle_grid)
 
 
 class Puzzle:
 
-    def __init__(self, grid: Optional[np.ndarray] = None):
+    def __init__(self, grid: Optional[np.ndarray] = None, selected: Optional[Tuple[int, int]] = None):
         """
         Makes a puzzle grid
         :param grid: A grid already holding some values. If passed this will be used as the grid if a correct size and
         contains values [0-9], otherwise an exception is raised
         """
+        # Set the grid to what was passed or an empty grid
         if grid is None:
             self.puzzle_grid = np.zeros((9, 9), dtype=np.int8)
         else:
             self.puzzle_grid = grid
+        self.selected: Optional[Tuple[int, int]] = selected
+        # Get all indexes that are in the original puzzle
+        self.original_indexes = list(filter(lambda x: self.puzzle_grid[x] != 0,
+                                            [(i, j) for i in range(9) for j in range(9)]))
         # Now make sure the grid is valid, and if not raise an exception
         if not self.is_puzzle_valid():
             raise ValueError("The input grid was not valid")
@@ -196,7 +201,7 @@ class Puzzle:
         options = set([i for i in range(1, 10)]).difference(already_taken)
         return options
 
-    def is_finished(self) -> bool:
+    def is_puzzle_solved(self) -> bool:
         """
         Sees if the puzzle is filled in completely
         :return: True if all the cells have a number and the puzzle is valid
@@ -212,6 +217,8 @@ class Puzzle:
         :param value: the value to update with
         :return: True if the puzzle was updated, False if the update was rejected
         """
+        if (row, col) in self.original_indexes:
+            return False
         old_value = self.puzzle_grid[row, col]
         self.puzzle_grid[row, col] = value
         if not self.is_puzzle_valid():

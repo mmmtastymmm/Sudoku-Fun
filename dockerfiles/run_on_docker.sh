@@ -1,4 +1,4 @@
-# This runs the GUI on docker
+# This runs the GUI on docker for linux. Run from this directory.
 
 # Make the container name
 DOCKER_CONTAINER_NAME="sudoku-fun-run"

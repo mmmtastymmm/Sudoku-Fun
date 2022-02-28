@@ -6,16 +6,33 @@ import pygame
 from classes.puzzle import Puzzle, make_solvable_puzzle
 
 
-def format_time(secs):
+def format_time(secs: float) -> str:
+    """
+    Formats the time for the clock display
+    :param secs: How many seconds have passed in the game so far
+    :return: The formatted time string
+    """
     sec = secs % 60
     minute = secs // 60
 
-    mat = f" {minute}:{sec:02d}"
-    return mat
+    time_passed = f" {minute}:{sec:02d}"
+    return time_passed
 
 
-def draw_cube(window, value, row, col, board_width, board_height, selected: bool,
-              original_indexes: list[Tuple[int, int]]):
+def draw_cell(window: pygame.Surface, value: int, row: int, col: int, board_width: int, board_height: int,
+              selected: bool, original_indexes: list[Tuple[int, int]]):
+    """
+    Draws one cell
+    :param window: Surface to draw on
+    :param value: the value the cell holds
+    :param row: the row of the cell
+    :param col: the col of the cell
+    :param board_width: The width of the sudoku board
+    :param board_height: The width of the sudoku board
+    :param selected: if the cell is currently selected
+    :param original_indexes: if the cell is an original index
+    :return: Nothing, the cell is drawn
+    """
     fnt = pygame.font.SysFont("comicsans", 40)
 
     gap_width = board_width / 9
@@ -35,7 +52,7 @@ def draw_cube(window, value, row, col, board_width, board_height, selected: bool
         pygame.draw.rect(window, selected_color, (x, y, gap_width, gap_height), 3)
 
 
-def draw_grid(window, puzzle: Puzzle, board_width: int, board_height: int):
+def draw_sudoku_board(window: pygame.Surface, puzzle: Puzzle, board_width: int, board_height: int):
     rows, cols = puzzle.puzzle_grid.shape
     # Draw Grid Lines
     gap = board_width / rows
@@ -46,16 +63,25 @@ def draw_grid(window, puzzle: Puzzle, board_width: int, board_height: int):
             thick = 1
         pygame.draw.line(window, (0, 0, 0), (0, i * gap), (board_width, i * gap), thick)
         pygame.draw.line(window, (0, 0, 0), (i * gap, 0), (i * gap, board_height), thick)
-
+    # Draw all the boxes
     for row in range(9):
         for col in range(9):
             is_selected = puzzle.selected == (row, col)
-            draw_cube(window, puzzle.puzzle_grid[row, col], row, col, board_width, board_height,
+            draw_cell(window, puzzle.puzzle_grid[row, col], row, col, board_width, board_height,
                       is_selected, puzzle.original_indexes)
 
 
 def get_clicked_row_col(mouse_position: Tuple[int, int], board_width: int, board_height: int, rows, cols) \
         -> Optional[Tuple[int, int]]:
+    """
+    Gets the clicked box coordinates
+    :param mouse_position: The mouse position from pygame
+    :param board_width: How high for the sudoku board
+    :param board_height: How wide for the sudoku board
+    :param rows: how many rows are in the board
+    :param cols: how many cols are in the board
+    :return: None if outside the board, or the (row, col)
+    """
     # These are "swapped", so this is a correct unpacking
     mouse_y, mouse_x = mouse_position
     if mouse_x > board_width or mouse_y > board_height:
@@ -64,20 +90,31 @@ def get_clicked_row_col(mouse_position: Tuple[int, int], board_width: int, board
     return indexes
 
 
-def redraw_window(window, puzzle: Puzzle, game_time, strikes):
+def redraw_window(window: pygame.Surface, puzzle: Puzzle, game_time: float):
+    """
+    Draws the grid on the window surface provided
+    :param window: The window to draw on
+    :param puzzle: The puzzle to draw
+    :param game_time: How long the user has been working on the puzzle
+    :return: None, draws the border
+    """
     window.fill((255, 255, 255))
     # Draw time
     fnt = pygame.font.SysFont("comicsans", 40)
     text = fnt.render("Time: " + format_time(game_time), True, (0, 0, 0))
     window.blit(text, (540 - 160, 560))
-    # Draw Strikes
-    text = fnt.render("X " * strikes, True, (255, 0, 0))
     window.blit(text, (20, 560))
     # Draw grid and board
-    draw_grid(window, puzzle, 540, 540)
+    draw_sudoku_board(window, puzzle, 540, 540)
 
 
-def handle_arrow_keys(event, puzzle):
+def handle_arrow_keys(event: pygame.event.Event, puzzle: Puzzle):
+    """
+    Moves the selected box with the arrow keys
+    :param event: The key event
+    :param puzzle: the puzzle to update
+    :return: None, with the side effect of the puzzle selected state updated
+    """
     if not puzzle.selected:
         return
     if event.key == pygame.K_UP:
@@ -100,11 +137,9 @@ def main():
     window = pygame.display.set_mode((540, 600))
     pygame.display.set_caption("Sudoku Fun")
     puzzle = make_solvable_puzzle()
-    key = None
     run = True
     done = False
     start = time.time()
-    strikes = 0
     play_time = 0
     while run:
         if not done:
@@ -117,30 +152,21 @@ def main():
                 handle_number_updates(event, puzzle)
                 handle_arrow_keys(event, puzzle)
 
-            # if event.key == pygame.K_RETURN:
-            #     i, j = board.selected
-            #     if board.cubes[i][j].temp != 0:
-            #         if board.place(board.cubes[i][j].temp):
-            #             print("Success")
-            #         else:
-            #             print("Wrong")
-            #             strikes += 1
-            #         key = None
-            #
-            #         if board.is_finished():
-            #             print("Game over")
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 puzzle.selected = (get_clicked_row_col(pygame.mouse.get_pos(), board_width, board_height, rows, cols))
 
-        # if board.selected and key is not None:
-        #     board.sketch(key)
         done = puzzle.is_finished()
-        redraw_window(window, puzzle, play_time, strikes)
+        redraw_window(window, puzzle, play_time)
         pygame.display.update()
 
 
-def handle_number_updates(event, puzzle):
+def handle_number_updates(event: pygame.event.Event, puzzle: Puzzle):
+    """
+    If the user updates a number add that to the puzzle
+    :param event: a pygame event
+    :param puzzle: the puzzle to update
+    :return: None, the puzzle could be modified
+    """
     if puzzle.selected is None:
         return
     if event.key == pygame.K_1 or event.key == pygame.K_KP1:
@@ -165,5 +191,6 @@ def handle_number_updates(event, puzzle):
         puzzle.safe_update(puzzle.selected[0], puzzle.selected[1], 0)
 
 
-main()
-pygame.quit()
+if __name__ == "__main__":
+    main()
+    pygame.quit()

@@ -4,7 +4,7 @@
 DOCKER_CONTAINER_NAME="sudoku-fun-run"
 # Build the image
 docker build -f run.Dockerfile -t mmmtastymmm/sudoku-fun-run:0.1.0 ..
-# Run the image
+# Run the image (it will error out without being added to xhosts)
 docker run -it --name $DOCKER_CONTAINER_NAME \
   --env="DISPLAY" \
     --env="QT_X11_NO_MITSHM=1" \

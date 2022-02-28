@@ -101,7 +101,7 @@ def make_solvable_puzzle() -> 'Puzzle':
 
 class Puzzle:
 
-    def __init__(self, grid: Optional[np.ndarray] = None, selected: Optional[Tuple[int, int]] = None):
+    def __init__(self, grid: Optional[np.ndarray] = None, selected: Optional[list[int, int]] = None):
         """
         Makes a puzzle grid
         :param grid: A grid already holding some values. If passed this will be used as the grid if a correct size and
@@ -112,7 +112,7 @@ class Puzzle:
             self.puzzle_grid = np.zeros((9, 9), dtype=np.int8)
         else:
             self.puzzle_grid = grid
-        self.selected: Optional[Tuple[int, int]] = selected
+        self.selected: Optional[list[int, int]] = selected
         # Get all indexes that are in the original puzzle
         self.original_indexes = list(filter(lambda x: self.puzzle_grid[x] != 0,
                                             [(i, j) for i in range(9) for j in range(9)]))

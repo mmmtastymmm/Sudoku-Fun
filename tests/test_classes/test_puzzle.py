@@ -181,3 +181,11 @@ def test_original_list_has_all_filled_puzzle():
                 assert (i, j) in puzzle.original_indexes
             else:
                 assert (i, j) not in puzzle.original_indexes
+
+
+def test_unable_to_modify_original_value():
+    grid = np.zeros((9, 9))
+    grid[0, 0] = 2
+    puzzle = Puzzle(grid)
+    assert not puzzle.safe_update(0, 0, 1)
+    assert puzzle.puzzle_grid[0, 0] == 2

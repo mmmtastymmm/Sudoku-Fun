@@ -217,6 +217,8 @@ class Puzzle:
         :param value: the value to update with
         :return: True if the puzzle was updated, False if the update was rejected
         """
+        if (row, col) in self.original_indexes:
+            return False
         old_value = self.puzzle_grid[row, col]
         self.puzzle_grid[row, col] = value
         if not self.is_puzzle_valid():

@@ -96,21 +96,26 @@ def make_solvable_puzzle() -> 'Puzzle':
         if not still_no_guess:
             puzzle.puzzle_grid[row, col] = old_value
     # Return this puzzle
-    return answer_key
+    return Puzzle(puzzle.puzzle_grid)
 
 
 class Puzzle:
 
-    def __init__(self, grid: Optional[np.ndarray] = None):
+    def __init__(self, grid: Optional[np.ndarray] = None, selected: Optional[Tuple[int, int]] = None):
         """
         Makes a puzzle grid
         :param grid: A grid already holding some values. If passed this will be used as the grid if a correct size and
         contains values [0-9], otherwise an exception is raised
         """
+        # Set the grid to what was passed or an empty grid
         if grid is None:
             self.puzzle_grid = np.zeros((9, 9), dtype=np.int8)
         else:
             self.puzzle_grid = grid
+        self.selected: Optional[Tuple[int, int]] = selected
+        # Get all indexes that are in the original puzzle
+        self.original_indexes = list(filter(lambda x: self.puzzle_grid[x] != 0,
+                                            [(i, j) for i in range(9) for j in range(9)]))
         # Now make sure the grid is valid, and if not raise an exception
         if not self.is_puzzle_valid():
             raise ValueError("The input grid was not valid")

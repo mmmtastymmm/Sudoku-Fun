@@ -166,3 +166,18 @@ def test_solve_on_impossible_difficulty():
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
     assert answer.is_finished()
+
+
+def test_original_list_empty_on_emtpy_puzzle():
+    empty_puzzle = Puzzle()
+    assert len(empty_puzzle.original_indexes) == 0
+
+
+def test_original_list_has_all_filled_puzzle():
+    puzzle = make_solvable_puzzle()
+    for i in range(9):
+        for j in range(9):
+            if puzzle.puzzle_grid[i, j] != 0:
+                assert (i, j) in puzzle.original_indexes
+            else:
+                assert (i, j) not in puzzle.original_indexes

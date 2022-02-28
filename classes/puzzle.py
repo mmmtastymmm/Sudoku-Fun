@@ -34,7 +34,7 @@ def make_puzzle_answer_key() -> 'Puzzle':
     puzzle = Puzzle()
     adjustments: list[Tuple[int, int]] = []
     bad_adjustments: dict[Tuple[int, int], list[int]] = {}
-    while not puzzle.is_finished():
+    while not puzzle.is_puzzle_solved():
         spaces_possibilities: list[list[Tuple[int, int]]] = [[] for _ in range(10)]
         for row in range(9):
             for col in range(9):
@@ -201,7 +201,7 @@ class Puzzle:
         options = set([i for i in range(1, 10)]).difference(already_taken)
         return options
 
-    def is_finished(self) -> bool:
+    def is_puzzle_solved(self) -> bool:
         """
         Sees if the puzzle is filled in completely
         :return: True if all the cells have a number and the puzzle is valid

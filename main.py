@@ -90,7 +90,7 @@ def get_clicked_row_col(mouse_position: Tuple[int, int], board_width: int, board
     return indexes
 
 
-def redraw_window(window: pygame.Surface, puzzle: Puzzle, game_time: float):
+def redraw_window(window: pygame.Surface, puzzle: Puzzle, game_time: float, is_done: bool):
     """
     Draws the grid on the window surface provided
     :param window: The window to draw on
@@ -103,7 +103,8 @@ def redraw_window(window: pygame.Surface, puzzle: Puzzle, game_time: float):
     fnt = pygame.font.SysFont("comicsans", 40)
     text = fnt.render("Time: " + format_time(game_time), True, (0, 0, 0))
     window.blit(text, (540 - 160, 560))
-    window.blit(text, (20, 560))
+    if is_done:
+        window.blit(fnt.render("Done!:", True, (0, 0, 0)), (20, 560))
     # Draw grid and board
     draw_sudoku_board(window, puzzle, 540, 540)
 
@@ -138,11 +139,11 @@ def main():
     pygame.display.set_caption("Sudoku Fun")
     puzzle = make_solvable_puzzle()
     run = True
-    done = False
+    is_puzzle_solved = False
     start = time.time()
     play_time = 0
     while run:
-        if not done:
+        if not is_puzzle_solved:
             play_time = round(time.time() - start)
 
         for event in pygame.event.get():
@@ -155,8 +156,8 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 puzzle.selected = (get_clicked_row_col(pygame.mouse.get_pos(), board_width, board_height, rows, cols))
 
-        done = puzzle.is_finished()
-        redraw_window(window, puzzle, play_time)
+        is_puzzle_solved = puzzle.is_puzzle_solved()
+        redraw_window(window, puzzle, play_time, is_puzzle_solved)
         pygame.display.update()
 
 

@@ -105,7 +105,7 @@ def test_get_options_square_full():
 def test_answer_key_generation():
     puzzle = make_puzzle_answer_key()
     assert puzzle.is_puzzle_valid()
-    assert puzzle.is_finished()
+    assert puzzle.is_puzzle_solved()
 
 
 def test_generate_puzzle():
@@ -139,14 +139,14 @@ def test_solve_empty():
     puzzle = Puzzle()
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
-    assert answer.is_finished()
+    assert answer.is_puzzle_solved()
 
 
 def test_solve_on_partially_filled():
     puzzle = make_solvable_puzzle()
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
-    assert answer.is_finished()
+    assert answer.is_puzzle_solved()
 
 
 def test_solve_on_impossible_difficulty():
@@ -165,7 +165,7 @@ def test_solve_on_impossible_difficulty():
     puzzle = Puzzle(grid)
     answer = puzzle.generate_answer_key_brute_force()
     assert answer
-    assert answer.is_finished()
+    assert answer.is_puzzle_solved()
 
 
 def test_original_list_empty_on_emtpy_puzzle():
